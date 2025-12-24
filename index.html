@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>New Tran English App - Grade 7 Listening Mode</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root {
+        --bg-gradient: linear-gradient(135deg, #fce38a, #f38181);
+        --card-bg: #ffffffcc;
+        --primary: #ff6f61;
+        --primary-dark: #e65b4f;
+        --accent: #45b7d1;
+        --accent-soft: #e0f7ff;
+        --text-main: #333;
+      }
+      * { box-sizing: border-box; }
+      body {
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        margin: 0; min-height: 100vh;
+        background: var(--bg-gradient); color: var(--text-main);
+      }
+      .page { max-width: 960px; margin: 0 auto; padding: 16px 12px 40px; }
+      h1 { text-align: center; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.18); margin: 8px 0 4px; font-size: 26px; }
+      .subtitle { text-align: center; color: #fff; font-size: 13px; margin-bottom: 10px; }
+      .card { background: var(--card-bg); backdrop-filter: blur(6px); border-radius: 16px; padding: 14px 16px; margin-top: 12px; box-shadow: 0 6px 14px rgba(0,0,0,0.15); }
+      .card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+      .pill { padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: var(--accent-soft); color: #0077a3; white-space: nowrap; }
+      .label { font-weight: 600; margin: 6px 0 2px; font-size: 14px; }
+      input, select, textarea {
+        width: 100%; border-radius: 10px; border: 1px solid #ddd;
+        padding: 7px 9px; margin: 2px 0 8px; font-size: 14px; font-family: inherit;
+        outline: none; transition: border 0.15s, box-shadow 0.15s;
+      }
+      input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(69, 183, 209, 0.25); }
+      textarea { resize: vertical; min-height: 60px; }
+      textarea[readonly] { background-color: #e9ecef; color: #495057; cursor: not-allowed; }
+
+      button {
+        border: none; border-radius: 999px; padding: 8px 16px; font-size: 14px; font-weight: 600;
+        cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px;
+        transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      }
+      button:active { transform: translateY(1px); box-shadow: none; }
+      .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(230, 91, 79, 0.45); }
+      .btn-primary:hover { background: var(--primary-dark); }
+      .btn-secondary { background: #fff; color: var(--primary); border: 1px solid rgba(0,0,0,0.06); }
+      .btn-secondary:disabled, .btn-primary:disabled { opacity: 0.65; cursor: default; box-shadow: none; }
+      .btn-danger { background: #ff4444; color: white; box-shadow: 0 4px 10px rgba(255, 68, 68, 0.4); }
+      .btn-danger:hover { background: #cc0000; }
+
+      .small { font-size: 12px; color: #666; }
+      .status { font-size: 13px; margin-top: 4px; font-weight: 500; }
+      .status-ok { color: #1b8f3b; }
+      .status-error { color: #c62828; }
+      .flex-row { display: flex; gap: 8px; flex-wrap: wrap; }
+      .flex-row > div { flex: 1 1 150px; }
+      .question-list {
+        margin-top: 6px; border-radius: 10px; background: #fff; border: 1px solid #eee;
+        max-height: 210px; overflow-y: auto; padding: 6px 6px 4px;
+      }
+      .question-item { padding: 6px 8px; border-radius: 8px; margin-bottom: 4px; font-size: 13px; cursor: pointer; display: flex; gap: 6px; }
+      .question-item span.q-no { font-weight: 700; color: var(--accent); min-width: 52px; }
+      .question-item:hover { background: #f3f9ff; }
+      .question-item.active { background: #e1f2ff; border-left: 3px solid var(--accent); }
+      .badge-part { font-size: 11px; padding: 1px 8px; border-radius: 999px; background: rgba(255,255,255,0.9); color: #555; border: 1px dashed #ddd; }
+      .footer { text-align: center; font-size: 11px; color: #fff; margin-top: 18px; opacity: 0.9; }
+
+      .btn-speak { background: #4caf50; color: #fff; box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4); }
+      .btn-speak:hover { background: #43a047; }
+
+      #questionTextContainer { display: none; animation: fadeIn 0.3s; }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+      .marquee { width: 100%; overflow: hidden; white-space: nowrap; box-sizing: border-box; background: rgba(255,255,255,0.18); padding: 6px 0; margin-bottom: 6px; border-radius: 8px; backdrop-filter: blur(3px); }
+      .marquee span { display: inline-block; padding-left: 100%; font-weight: bold; color: #d50000; font-size: 16px; animation: marqueeAnim 14s linear infinite; }
+      @keyframes marqueeAnim { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
+
+      #inapp-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85); z-index: 9999; color: white;
+        display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;
+      }
+      .arrow-up { font-size: 40px; margin-bottom: 10px; animation: bounce 1s infinite; position: absolute; top: 20px; right: 20px; }
+      @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+      .mini-banner {
+        border-radius: 12px; padding: 10px 12px; background: rgba(255,255,255,0.8);
+        border: 1px solid rgba(0,0,0,0.06); margin-top: 10px;
+      }
+      
+      /* Upload Progress */
+      .upload-progress {
+        display: none;
+        margin-top: 12px;
+        padding: 10px;
+        background: #f5f5f5;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+      }
+      .progress-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .progress-bar-container {
+        width: 100%;
+        height: 6px;
+        background: #e0e0e0;
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .progress-bar {
+        width: 0%;
+        height: 100%;
+        background: #4caf50;
+        transition: width 0.3s ease;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="inapp-overlay">
+      <div class="arrow-up">↗</div>
+      <h3>⚠️ Cảnh báo trình duyệt</h3>
+      <p>Bạn đang mở link này trên Zalo/Facebook.</p>
+      <p>Microphone sẽ <strong>không hoạt động</strong> ở đây.</p>
+      <p style="background:#444; padding:10px; border-radius:8px; margin-top:15px;">
+        Vui lòng nhấn vào dấu <strong>3 chấm (...)</strong> ở góc trên cùng bên phải và chọn
+        <br><strong>"Mở bằng trình duyệt" (Open in Browser)</strong>.
+      </p>
+    </div>
+
+    <div class="marquee">
+      <span>★ Mr. Tân Trần Ngọc – Xuân Phú lower secondary school ★</span>
+    </div>
+
+    <div class="page">
+      <h1>New Tran English App</h1>
+      <div class="subtitle">Luyện nói tiếng Anh – Grade 7 (Listening Mode)</div>
+
+      <div id="pendingBox" class="mini-banner" style="display:none;">
+        <div><strong>⚠️ Có 1 bài chưa gửi xong (do lỗi mạng)</strong></div>
+        <div class="small" id="pendingInfo"></div>
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="resendPendingBtn" class="btn-primary" type="button">📤 Gửi lại bài vừa lưu</button>
+          <button id="clearPendingBtn" class="btn-secondary" type="button">🧹 Xóa bài lưu</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="pill">Bước 0</div>
+          <div><strong>Thông tin học sinh</strong></div>
+        </div>
+        <div class="flex-row">
+          <div>
+            <div class="label">Họ và tên:</div>
+            <input id="studentName" placeholder="Nguyễn Văn Nam" />
+          </div>
+          <div>
+            <div class="label">Lớp:</div>
+            <input id="studentClass" placeholder="7A" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="pill">Bước 1</div>
+          <div><strong>Chọn bài luyện nói</strong></div>
+        </div>
+        <div class="flex-row">
+          <div>
+            <div class="label">Khối lớp:</div>
+            <select id="gradeSelect"></select>
+          </div>
+          <div>
+            <div class="label">Chủ đề:</div>
+            <select id="topicSelect"></select>
+          </div>
+        </div>
+        <div class="flex-row">
+          <div>
+            <div class="label">Phần:</div>
+            <select id="partSelect">
+              <option value="part1">Part I. Answer personal questions</option>
+              <option value="part2">Part II. Talk about the topic</option>
+              <option value="part3">Part III. Answer questions about topic</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:flex-end;">
+            <span class="badge-part" id="partNote"></span>
+          </div>
+        </div>
+        <div class="label">Danh sách câu hỏi (Bấm vào để chọn):</div>
+        <div class="question-list" id="questionList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="pill">Bước 2</div>
+          <div><strong>Nghe & Hiểu câu hỏi</strong></div>
+        </div>
+
+        <div class="flex-row" style="align-items: center; margin-bottom: 10px;">
+          <button id="speakQuestionBtn" class="btn-speak" type="button">🔊 Nghe câu hỏi (Listen)</button>
+          <button id="showTextBtn" class="btn-secondary" type="button">👁️ Không nghe được? Hiện văn bản</button>
+        </div>
+
+        <div id="questionTextContainer">
+          <div class="label">Nội dung câu hỏi:</div>
+          <textarea id="question" rows="3" readonly style="background:#f9f9f9; color:#555;"></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="pill">Bước 3</div>
+          <div><strong>Trả lời & Gửi</strong></div>
+        </div>
+
+        <div class="flex-row" style="align-items:center;margin-bottom:4px;">
+          <button id="startBtn" class="btn-primary" type="button">🎙 Bắt đầu nói</button>
+          <button id="stopBtn" class="btn-secondary" type="button" disabled>⏹ Dừng & Qua câu tiếp theo</button>
+        </div>
+        <div id="status" class="status">Nhấn "Bắt đầu nói" để trả lời.</div>
+
+        <!-- Thông báo chỉ cần nói -->
+        <div style="background: #e8f5e8; padding: 10px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #4caf50;">
+          <strong>📢 Lưu ý:</strong> Ứng dụng chỉ yêu cầu <strong>nói (ghi âm)</strong>. Không cần nhập văn bản.
+        </div>
+
+        <!-- Transcript ẩn đi (vẫn cần cho logic) -->
+        <div style="display: none;">
+          <div class="label">Transcript (HS nói):</div>
+          <textarea
+            id="answerText"
+            rows="5"
+            readonly
+            placeholder="Văn bản sẽ tự động hiện khi bạn nói... (Không thể tự gõ)"
+            style="background-color:#f0f8ff;"
+          ></textarea>
+
+          <div class="flex-row" style="align-items:center; gap:8px; margin-top: 5px;">
+            <button id="clearBtn" class="btn-danger" type="button">🗑 Xóa câu trả lời này</button>
+          </div>
+        </div>
+
+        <br />
+        <div class="flex-row" style="align-items:center; gap:8px;">
+          <button id="sendBtn" class="btn-primary" type="button">📩 Nộp bài cho GV</button>
+          <button id="suggestBtn" class="btn-secondary" type="button" disabled>💡 Xem gợi ý trả lời</button>
+        </div>
+        
+        <!-- Upload Progress -->
+        <div id="uploadProgress" class="upload-progress">
+          <div class="progress-header">
+            <span>Đang tải lên...</span>
+            <span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-bar-container">
+            <div id="progressBar" class="progress-bar"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Kết quả gửi</h2>
+        <div id="resultArea" class="small">Chưa gửi.</div>
+      </div>
+
+      <div class="card">
+        <h2>Gợi ý trả lời / Suggested Answer</h2>
+        <div id="suggestionsArea" class="small" style="white-space: pre-line;"></div>
+      </div>
+
+      <div class="footer">© New Tran English App – Tân Trần Ngọc &amp; Google Apps Script</div>
+    </div>
+
+    <script>
+      // ===================== APPS SCRIPT URL (FINAL) =====================
+      // URL này cần được thay bằng URL Google Apps Script thực tế của bạn
+      const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwbo-cFpYJM3UvOloK4Mn0mpyaEsnxUjjarjkM9tSwlsjqL4pgjOaEe1ak0LCrWfsVj/exec";
+      // ===================================================================
+
+      const TOTAL_QUESTIONS = 10;
+
+      // ======= lưu bài khi gửi lỗi =======
+      const PENDING_KEY = "NEWTRAN_PENDING_SUBMISSION_V1";
+
+      // ======= chống quá dung lượng (base64) =======
+      const MAX_DATAURL_CHARS = 28_000_000; // vượt ngưỡng => không gửi kiểu dataUrl
+      const SMALL_BLOB_MAX = 4 * 1024 * 1024; // <= 4MB: gửi dataUrl; >4MB: dùng chunk upload
+
+      /* ================== DỮ LIỆU KHỐI 7 ================== */
+      const GRADES = [
+        {
+          id: "7",
+          name: "Grade 7",
+          topics: [
+            { id: "g7_hobbies", name: "Hobbies", vn: "Sở thích" },
+            { id: "g7_healthy_living", name: "Healthy Living", vn: "Sống lành mạnh" },
+            { id: "g7_community_service", name: "Community Service", vn: "Dịch vụ cộng đồng" },
+            { id: "g7_music_and_arts", name: "Music and Arts", vn: "Âm nhạc và Nghệ thuật" },
+            { id: "g7_food_and_drink", name: "Food and Drink", vn: "Đồ ăn và Đồ uống" },
+            { id: "g7_a_visit_to_a_school", name: "A Visit to a School", vn: "Một chuyến thăm đến một ngôi trường" },
+            { id: "g7_traffic", name: "Traffic", vn: "Giao thông" },
+            { id: "g7_films", name: "Films", vn: "Phim ảnh" },
+            { id: "g7_festivals_around_the_world", name: "Festivals Around the World", vn: "Các lễ hội trên thế giới" },
+            { id: "g7_energy_sources", name: "Energy Sources", vn: "Các nguồn năng lượng" },
+            { id: "g7_travelling_in_the_future", name: "Travelling in the Future", vn: "Di chuyển/Đi lại trong tương lai" },
+            { id: "g7_english_speaking_countries", name: "English-Speaking Countries", vn: "Các nước nói tiếng Anh" }
+          ]
+        }
+      ];
+
+      const GRADE_7_QUESTIONS = {
+        g7_hobbies: {
+          part1: [
+            "Question 1. What is your favorite hobby?",
+            "Question 2. When did you start this hobby?",
+            "Question 3. How often do you do your hobby?",
+            "Question 4. Who do you share your hobby with?",
+            "Question 5. Why do you like this hobby?"
+          ],
+          part2: ["Question 6. Please tell me about your hobbies."],
+          part3: [
+            "Question 7. Why are hobbies important for students?",
+            "Question 8. Do you prefer indoor or outdoor hobbies?",
+            "Question 9. How can hobbies help you relax?",
+            "Question 10. What new hobby would you like to try in the future?"
+          ]
+        },
+        g7_healthy_living: {
+          part1: [
+            "Question 1. What healthy foods do you like eating?",
+            "Question 2. How often do you exercise?",
+            "Question 3. How many hours do you sleep every day?",
+            "Question 4. What do you do to stay healthy?",
+            "Question 5. Who teaches you about healthy living?"
+          ],
+          part2: ["Question 6. Please tell me about healthy living."],
+          part3: [
+            "Question 7. Why is a healthy lifestyle important?",
+            "Question 8. Should students play sports every day?",
+            "Question 9. How can students avoid unhealthy habits?",
+            "Question 10. What healthy change would you like to make?"
+          ]
+        },
+        g7_community_service: {
+          part1: [
+            "Question 1. Have you ever joined community service?",
+            "Question 2. What activities do you like doing to help others?",
+            "Question 3. Who do you usually help in your community?",
+            "Question 4. How often do you join volunteer work?",
+            "Question 5. How do you feel when helping people?"
+          ],
+          part2: ["Question 6. Please tell me about community service."],
+          part3: [
+            "Question 7. Why is community service important?",
+            "Question 8. How can students help their community?",
+            "Question 9. What problems can community service solve?",
+            "Question 10. What volunteer activity would you like to try?"
+          ]
+        },
+        g7_music_and_arts: {
+          part1: [
+            "Question 1. What kind of music do you like?",
+            "Question 2. Who is your favorite singer?",
+            "Question 3. Do you like drawing or painting?",
+            "Question 4. What musical instrument do you want to learn?",
+            "Question 5. How often do you listen to music?"
+          ],
+          part2: ["Question 6. Please tell me about music and arts in your life."],
+          part3: [
+            "Question 7. Why is music important for students?",
+            "Question 8. Do you think art helps people relax?",
+            "Question 9. How can students learn more about music or arts?",
+            "Question 10. What art activity would you like to try?"
+          ]
+        },
+        g7_food_and_drink: {
+          part1: [
+            "Question 1. What food do you like the most?",
+            "Question 2. What drink do you like best?",
+            "Question 3. Who cooks in your family?",
+            "Question 4. How often do you eat out?",
+            "Question 5. Do you like trying new food?"
+          ],
+          part2: ["Question 6. Please tell me about the food and drinks you enjoy."],
+          part3: [
+            "Question 7. Why is it important to eat healthy food?",
+            "Question 8. Should students drink more water?",
+            "Question 9. How can we avoid eating too much fast food?",
+            "Question 10. What new dish would you like to try?"
+          ]
+        },
+        g7_a_visit_to_a_school: {
+          part1: [
+            "Question 1. Have you ever visited another school?",
+            "Question 2. Who did you visit the school with?",
+            "Question 3. What did you like most at the school you visited?",
+            "Question 4. What activities did you do there?",
+            "Question 5. Would you like to visit it again?"
+          ],
+          part2: ["Question 6. Please tell me about a school visit."],
+          part3: [
+            "Question 7. Why are school visits useful?",
+            "Question 8. What can students learn from visiting other schools?",
+            "Question 9. How do school visits help students make friends?",
+            "Question 10. What school would you like to visit in the future?"
+          ]
+        },
+        g7_traffic: {
+          part1: [
+            "Question 1. How do you go to school?",
+            "Question 2. How long does it take to go to school?",
+            "Question 3. Who do you usually travel with?",
+            "Question 4. What transport do you like the most?",
+            "Question 5. What traffic problems do you often see?"
+          ],
+          part2: ["Question 6. Please tell me about traffic in your area."],
+          part3: [
+            "Question 7. Why should students follow traffic rules?",
+            "Question 8. How can we make the streets safer?",
+            "Question 9. What is the best way to reduce traffic jams?",
+            "Question 10. What transport will be popular in the future?"
+          ]
+        },
+        g7_films: {
+          part1: [
+            "Question 1. What kind of films do you like?",
+            "Question 2. Who is your favorite actor or actress?",
+            "Question 3. How often do you watch films?",
+            "Question 4. What film did you watch recently?",
+            "Question 5. Do you prefer watching films at home or in the cinema?"
+          ],
+          part2: ["Question 6. Please tell me about your favorite film."],
+          part3: [
+            "Question 7. Why do people enjoy watching films?",
+            "Question 8. What can students learn from films?",
+            "Question 9. How can films help you relax?",
+            "Question 10. What film would you like to watch next?"
+          ]
+        },
+        g7_festivals_around_the_world: {
+          part1: [
+            "Question 1. What festival do you like most?",
+            "Question 2. How do you celebrate it?",
+            "Question 3. Who do you celebrate the festival with?",
+            "Question 4. Have you ever joined a festival in another place?",
+            "Question 5. What festival would you like to learn more about?"
+          ],
+          part2: ["Question 6. Please tell me about a festival you know."],
+          part3: [
+            "Question 7. Why are festivals important in our lives?",
+            "Question 8. What can students learn from festivals?",
+            "Question 9. How can festivals bring people together?",
+            "Question 10. What festival would you like to join in the future?"
+          ]
+        },
+        g7_energy_sources: {
+          part1: [
+            "Question 1. What kind of energy do you know?",
+            "Question 2. What energy is used in your home?",
+            "Question 3. Do you try to save energy?",
+            "Question 4. Who teaches you about saving energy?",
+            "Question 5. What energy source do you want to learn more about?"
+          ],
+          part2: ["Question 6. Please tell me about different energy sources."],
+          part3: [
+            "Question 7. Why is saving energy important?",
+            "Question 8. Should students learn about renewable energy?",
+            "Question 9. How can we use energy more carefully?",
+            "Question 10. What energy source will be popular in the future?"
+          ]
+        },
+        g7_travelling_in_the_future: {
+          part1: [
+            "Question 1. What means of transport do you use every day?",
+            "Question 2. How do you usually go to school?",
+            "Question 3. What vehicle do you like the most?",
+            "Question 4. Who do you often travel with?",
+            "Question 5. What problem do you usually see with transport today?"
+          ],
+          part2: ["Question 6. Please tell me about future means of transport."],
+          part3: [
+            "Question 7. How will transport be different in the future?",
+            "Question 8. Do you think future transport will be safer? Why or why not?",
+            "Question 9. What new means of transport would you like to try in the future?",
+            "Question 10. How can future transport help protect the environment?"
+          ]
+        },
+        g7_english_speaking_countries: {
+          part1: [
+            "Question 1. What English-speaking country do you know?",
+            "Question 2. Which English-speaking country would you like to visit?",
+            "Question 3. What food or culture do you know from that country?",
+            "Question 4. Who would you go there with?",
+            "Question 5. Why do you want to visit that country?"
+          ],
+          part2: ["Question 6. Please tell me about an English-speaking country you know."],
+          part3: [
+            "Question 7. Why is it useful to learn about English-speaking countries?",
+            "Question 8. How can students learn more about these countries?",
+            "Question 9. What differences do you know between English-speaking countries?",
+            "Question 10. What country would you like to explore more?"
+          ]
+        }
+      };
+
+      /* ===== GỢI Ý: 1 ĐOẠN A2 ~150 TỪ / CHỦ ĐỀ ===== */
+      const SUGGESTED_PARAGRAPHS_7 = {
+        g7_hobbies: "My favorite hobby is reading books. I started this hobby when I was in primary school. I read almost every day, especially before bedtime. I share my hobby with my best friend because we often exchange books. I like reading because it helps me relax and learn new things. Hobbies are important for students because they help reduce stress and develop creativity. I prefer indoor hobbies like reading and drawing. Hobbies can help you relax by taking your mind off schoolwork. In the future, I would like to try photography or gardening as a new hobby. These activities would help me appreciate nature and become more creative.",
+        
+        g7_healthy_living: "I try to maintain a healthy lifestyle by eating fruits and vegetables every day. I exercise three times a week, usually playing badminton or jogging. I sleep about 8 hours each night. To stay healthy, I also drink plenty of water and avoid junk food. My parents and PE teacher teach me about healthy living. A healthy lifestyle is important because it gives us energy and prevents diseases. Students should play sports regularly but not necessarily every day. To avoid unhealthy habits, students should limit screen time and choose healthy snacks. I would like to start eating more home-cooked meals instead of instant noodles.",
+        
+        g7_community_service: "Yes, I have joined community service at my school. I like helping clean the school garden and visiting elderly people. I usually help my neighbors and younger students. I join volunteer work about once a month. I feel happy and useful when helping people. Community service is important because it builds a caring community. Students can help by picking up litter, tutoring younger kids, or organizing charity events. Community service can solve problems like environmental pollution and loneliness. In the future, I would like to try teaching English to children in rural areas.",
+        
+        g7_music_and_arts: "I like pop music and Vietnamese traditional music. My favorite singer is Son Tung M-TP. Yes, I like drawing, especially landscapes. I want to learn to play the guitar. I listen to music every day while studying or relaxing. Music is important for students because it improves mood and concentration. Yes, art definitely helps people relax by expressing emotions. Students can learn more by joining clubs, watching tutorials, or visiting museums. I would like to try watercolor painting or pottery making in the future.",
+        
+        g7_food_and_drink: "My favorite food is pho, a traditional Vietnamese noodle soup. I like orange juice best. My mother cooks most meals in our family. We eat out about once a week. Yes, I enjoy trying new foods from different cultures. Eating healthy food is important for growth and brain development. Yes, students should drink more water instead of sugary drinks. We can avoid fast food by preparing home meals and eating regular meals. I would like to try sushi or pizza, which I've seen in movies.",
+        
+        g7_a_visit_to_a_school: "Yes, I visited a sister school last year. I went with my classmates and teacher. I liked their modern library the most. We attended an English class and played games with their students. Yes, I would like to visit again. School visits are useful for learning different teaching methods. Students can learn about different school facilities and activities. School visits help make friends through shared activities. I would like to visit a school in the city to see how different it is from my rural school.",
+        
+        g7_traffic: "I go to school by bicycle. It takes about 15 minutes. I usually travel with my friends. I like bicycles because they are healthy and environmentally friendly. I often see traffic jams near my school. Students should follow traffic rules for their safety and others'. We can make streets safer by using crosswalks and obeying traffic lights. The best way to reduce traffic jams is to use public transport or bicycles. I think electric scooters and smart cars will be popular in the future.",
+        
+        g7_films: "I like animated films and comedies. My favorite actress is Ngo Thanh Van. I watch films about twice a month. Recently I watched 'Kung Fu Panda'. I prefer watching films at home because it's more comfortable. People enjoy films for entertainment and escape from reality. Students can learn English, history, and moral lessons from films. Films help you relax by telling interesting stories. I would like to watch a science fiction film about space exploration next.",
+        
+        g7_festivals_around_the_world: "My favorite festival is Mid-Autumn Festival. I celebrate it by carrying lanterns and eating mooncakes. I celebrate with my family and neighbors. No, I haven't joined festivals in other places yet. I would like to learn more about Christmas. Festivals are important because they preserve cultural traditions. Students can learn about different cultures and histories. Festivals bring people together through shared activities and joy. I would like to join the Lantern Festival in Hoi An in the future.",
+        
+        g7_energy_sources: "I know solar, wind, water, and fossil fuel energy. My home uses electricity from the national grid. Yes, I turn off lights when not in use. My science teacher teaches about saving energy. I want to learn more about solar energy. Saving energy is important to protect the environment and save money. Yes, students should learn about renewable energy for a sustainable future. We can use energy carefully by using energy-efficient appliances. I think solar energy will be very popular because it's clean and abundant.",
+        
+        g7_travelling_in_the_future: "I use a bicycle every day. I usually go to school by bike. I like bicycles because they don't pollute. I often travel with my family. I usually see traffic accidents and pollution. Future transport will be faster, smarter, and greener. Yes, future transport will be safer with automatic systems and better materials. I would like to try flying cars or hyperloop trains. Future transport can protect the environment by using clean energy and reducing emissions.",
+        
+        g7_english_speaking_countries: "I know the USA, UK, Australia, and Canada. I would like to visit Australia. I know about hamburgers from the USA and kangaroos from Australia. I would go with my family. I want to visit because of the beautiful nature and friendly people. Learning about English-speaking countries helps understand the language better. Students can learn through books, films, and cultural exchange programs. Differences include accents, food, weather, and customs. I would like to explore Canada because of its natural beauty and multicultural cities."
+      };
+
+      /* ========== DOM ========== */
+      const gradeSelect = document.getElementById("gradeSelect");
+      const topicSelect = document.getElementById("topicSelect");
+      const partSelect  = document.getElementById("partSelect");
+      const questionList = document.getElementById("questionList");
+      const questionTextarea = document.getElementById("question");
+      const questionTextContainer = document.getElementById("questionTextContainer");
+      const showTextBtn = document.getElementById("showTextBtn");
+      const speakQuestionBtn = document.getElementById("speakQuestionBtn");
+      const answerText = document.getElementById("answerText");
+      const startBtn = document.getElementById("startBtn");
+      const stopBtn = document.getElementById("stopBtn");
+      const sendBtn = document.getElementById("sendBtn");
+      const suggestBtn = document.getElementById("suggestBtn");
+      const suggestionsArea = document.getElementById("suggestionsArea");
+      const resultArea = document.getElementById("resultArea");
+      const clearBtn = document.getElementById("clearBtn");
+      const statusEl = document.getElementById("status");
+      const uploadProgress = document.getElementById("uploadProgress");
+      const progressBar = document.getElementById("progressBar");
+      const progressPercent = document.getElementById("progressPercent");
+
+      const pendingBox = document.getElementById("pendingBox");
+      const pendingInfo = document.getElementById("pendingInfo");
+      const resendPendingBtn = document.getElementById("resendPendingBtn");
+      const clearPendingBtn = document.getElementById("clearPendingBtn");
+
+      // ========== state ==========
+      let recognition = null;
+      let isRecording = false;
+      let ignore_onend = false;
+
+      // ======= unified audio recorder =======
+      // mode: "media" (MediaRecorder) or "wav" (WebAudio fallback)
+      let recorderMode = "";
+      let isFullRecordingStarted = false;
+      let audioMimeType = "";
+      let micStream = null;
+
+      // MediaRecorder
+      let mediaRecorder = null;
+      let audioChunks = [];
+      let fullAudioBlob = null;
+
+      // WAV fallback recorder (WebAudio)
+      const WAV_TARGET_RATE = 16000;
+      let wavCtx = null;
+      let wavSource = null;
+      let wavProcessor = null;
+      let wavGain0 = null;
+      let wavPaused = true;
+      let wavBuffers = [];
+      let wavInputRate = 48000;
+
+      // Bắt buộc đủ 10 câu
+      let recordedFlags = new Array(TOTAL_QUESTIONS).fill(false);
+
+      // ========== helpers ==========
+      function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+      function pickSupportedMime() {
+        const candidates = ["audio/webm;codecs=opus","audio/webm","audio/ogg;codecs=opus","audio/ogg"];
+        if (!window.MediaRecorder) return "";
+        for (const t of candidates) {
+          try { if (MediaRecorder.isTypeSupported(t)) return t; } catch (e) {}
+        }
+        return "";
+      }
+
+      async function ensureMicStream() {
+        if (micStream) return micStream;
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        return micStream;
+      }
+
+      function allTenQuestionsRecorded() {
+        for (let i = 0; i < TOTAL_QUESTIONS; i++) if (!recordedFlags[i]) return false;
+        return true;
+      }
+
+      function blobToDataUrl(blob, cb) {
+        const fr = new FileReader();
+        fr.onload = () => cb(fr.result);
+        fr.onerror = () => cb(null);
+        fr.readAsDataURL(blob);
+      }
+
+      // ===================== CHUNK UPLOAD (FIX NO AUDIO) =====================
+      function uint8ToBase64(u8) {
+        let binary = "";
+        const chunk = 0x8000;
+        for (let i = 0; i < u8.length; i += chunk) {
+          binary += String.fromCharCode.apply(null, u8.subarray(i, i + chunk));
+        }
+        return btoa(binary);
+      }
+
+      async function uploadAudioInChunksNoCors(blob, mimeType, meta) {
+        const uploadId = `${Date.now()}_${Math.random().toString(16).slice(2)}`;
+        const bytes = new Uint8Array(await blob.arrayBuffer());
+
+        // ~200KB per chunk (an toàn cho iPhone/iPad)
+        const chunkBytes = 200 * 1024;
+        const total = Math.ceil(bytes.length / chunkBytes);
+
+        // Show progress
+        uploadProgress.style.display = "block";
+        progressBar.style.width = "0%";
+        progressPercent.textContent = "0%";
+
+        // Retry function
+        const uploadChunkWithRetry = async (idx, part, b64, retries = 3) => {
+          for (let attempt = 0; attempt < retries; attempt++) {
+            try {
+              await fetch(APPS_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                  action: "uploadChunk",
+                  uploadId,
+                  idx,
+                  total,
+                  mimeType,
+                  b64
+                })
+              });
+              return true;
+            } catch (err) {
+              console.log(`Chunk ${idx} attempt ${attempt + 1} failed:`, err);
+              if (attempt < retries - 1) {
+                await sleep(500 * (attempt + 1));
+              }
+            }
+          }
+          return false;
+        };
+
+        // Upload chunks
+        for (let idx = 0; idx < total; idx++) {
+          const start = idx * chunkBytes;
+          const end = Math.min(start + chunkBytes, bytes.length);
+          const part = bytes.subarray(start, end);
+          const b64 = uint8ToBase64(part);
+
+          const success = await uploadChunkWithRetry(idx, part, b64);
+          if (!success) {
+            throw new Error(`Failed to upload chunk ${idx + 1}/${total}`);
+          }
+
+          // Update progress
+          const percent = Math.round(((idx + 1) / total) * 100);
+          progressBar.style.width = `${percent}%`;
+          progressPercent.textContent = `${percent}%`;
+
+          await sleep(300);
+        }
+
+        // Finalize with retry
+        const finalizeWithRetry = async (retries = 3) => {
+          for (let attempt = 0; attempt < retries; attempt++) {
+            try {
+              await fetch(APPS_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                  action: "finalizeUpload",
+                  uploadId,
+                  total,
+                  mimeType,
+                  ...meta
+                })
+              });
+              return { ok: true, uploadId, total };
+            } catch (err) {
+              console.log(`Finalize attempt ${attempt + 1} failed:`, err);
+              if (attempt < retries - 1) {
+                await sleep(1000 * (attempt + 1));
+              }
+            }
+          }
+          throw new Error("Failed to finalize upload after all retries");
+        };
+
+        const result = await finalizeWithRetry();
+        
+        // Hide progress after delay
+        setTimeout(() => {
+          uploadProgress.style.display = "none";
+        }, 1000);
+        
+        return result;
+      }
+
+      // ===================== WAV FALLBACK (WebAudio) =====================
+      function downsampleBuffer(inputFloat32, inRate, outRate) {
+        if (outRate === inRate) return inputFloat32;
+        if (outRate > inRate) return inputFloat32;
+
+        const ratio = inRate / outRate;
+        const newLen = Math.round(inputFloat32.length / ratio);
+        const result = new Float32Array(newLen);
+
+        let offsetResult = 0;
+        let offsetBuffer = 0;
+
+        while (offsetResult < result.length) {
+          const nextOffsetBuffer = Math.round((offsetResult + 1) * ratio);
+          let accum = 0, count = 0;
+          for (let i = offsetBuffer; i < nextOffsetBuffer && i < inputFloat32.length; i++) {
+            accum += inputFloat32[i];
+            count++;
+          }
+          result[offsetResult] = count ? (accum / count) : 0;
+          offsetResult++;
+          offsetBuffer = nextOffsetBuffer;
+        }
+        return result;
+      }
+
+      function floatTo16BitPCM(float32Array) {
+        const out = new Int16Array(float32Array.length);
+        for (let i = 0; i < float32Array.length; i++) {
+          let s = Math.max(-1, Math.min(1, float32Array[i]));
+          out[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+        }
+        return out;
+      }
+
+      function encodeWav(int16Data, sampleRate) {
+        const buffer = new ArrayBuffer(44 + int16Data.length * 2);
+        const view = new DataView(buffer);
+
+        function writeString(offset, str){
+          for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+        }
+
+        const numChannels = 1;
+        const bitsPerSample = 16;
+        const byteRate = sampleRate * numChannels * bitsPerSample / 8;
+        const blockAlign = numChannels * bitsPerSample / 8;
+        const dataSize = int16Data.length * 2;
+
+        writeString(0, "RIFF");
+        view.setUint32(4, 36 + dataSize, true);
+        writeString(8, "WAVE");
+        writeString(12, "fmt ");
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true);
+        view.setUint16(22, numChannels, true);
+        view.setUint32(24, sampleRate, true);
+        view.setUint32(28, byteRate, true);
+        view.setUint16(32, blockAlign, true);
+        view.setUint16(34, bitsPerSample, true);
+        writeString(36, "data");
+        view.setUint32(40, dataSize, true);
+
+        let offset = 44;
+        for (let i = 0; i < int16Data.length; i++, offset += 2) {
+          view.setInt16(offset, int16Data[i], true);
+        }
+        return new Blob([buffer], { type: "audio/wav" });
+      }
+
+      async function startWavRecordingIfNeeded() {
+        if (isFullRecordingStarted && recorderMode === "wav") return;
+
+        await ensureMicStream();
+
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) throw new Error("WebAudio not supported");
+
+        wavCtx = new AudioCtx({ latencyHint: "interactive" });
+        try { await wavCtx.resume(); } catch(e){}
+
+        wavInputRate = wavCtx.sampleRate || 48000;
+        wavBuffers = [];
+        wavPaused = true;
+
+        wavSource = wavCtx.createMediaStreamSource(micStream);
+
+        const bufferSize = 4096;
+        wavProcessor = wavCtx.createScriptProcessor(bufferSize, 1, 1);
+
+        wavGain0 = wavCtx.createGain();
+        wavGain0.gain.value = 0;
+
+        wavProcessor.onaudioprocess = (e) => {
+          if (wavPaused) return;
+          try {
+            const input = e.inputBuffer.getChannelData(0);
+            const down = downsampleBuffer(input, wavInputRate, WAV_TARGET_RATE);
+            const pcm16 = floatTo16BitPCM(down);
+            wavBuffers.push(pcm16);
+          } catch(err) {
+            console.log("WAV process error", err);
+          }
+        };
+
+        wavSource.connect(wavProcessor);
+        wavProcessor.connect(wavGain0);
+        wavGain0.connect(wavCtx.destination);
+
+        recorderMode = "wav";
+        audioMimeType = "audio/wav";
+        isFullRecordingStarted = true;
+      }
+
+      function stopWavRecording(cb) {
+        try { wavPaused = true; } catch(e){}
+        try { if (wavProcessor) wavProcessor.disconnect(); } catch(e){}
+        try { if (wavSource) wavSource.disconnect(); } catch(e){}
+        try { if (wavGain0) wavGain0.disconnect(); } catch(e){}
+
+        const chunks = wavBuffers || [];
+        let totalLen = 0;
+        for (const a of chunks) totalLen += a.length;
+
+        const merged = new Int16Array(totalLen);
+        let off = 0;
+        for (const a of chunks) { merged.set(a, off); off += a.length; }
+
+        const blob = encodeWav(merged, WAV_TARGET_RATE);
+
+        const ctxToClose = wavCtx;
+        wavCtx = null; wavSource = null; wavProcessor = null; wavGain0 = null;
+        wavBuffers = [];
+        if (ctxToClose) { try { ctxToClose.close(); } catch(e) {} }
+
+        cb && cb(blob);
+      }
+
+      // =================== MediaRecorder path ===================
+      async function startMediaRecordingIfNeeded() {
+        if (isFullRecordingStarted && recorderMode === "media" && mediaRecorder) return;
+
+        if (!window.MediaRecorder) throw new Error("MediaRecorder not supported");
+        await ensureMicStream();
+
+        audioMimeType = pickSupportedMime() || "";
+        audioChunks = [];
+        fullAudioBlob = null;
+
+        mediaRecorder = new MediaRecorder(
+          micStream,
+          audioMimeType ? { mimeType: audioMimeType } : undefined
+        );
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) audioChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          try { fullAudioBlob = new Blob(audioChunks, { type: audioMimeType || "audio/webm" }); } catch (e) {}
+        };
+
+        // timeslice giúp mobile/Opera ổn định
+        try { mediaRecorder.start(1000); } catch(e) { mediaRecorder.start(); }
+
+        recorderMode = "media";
+        isFullRecordingStarted = true;
+      }
+
+      // ========= unified control =========
+      async function startFullRecordingIfNeeded() {
+        try {
+          await startMediaRecordingIfNeeded();
+        } catch (e) {
+          await startWavRecordingIfNeeded();
+        }
+      }
+
+      function pauseFullRecording() {
+        if (!isFullRecordingStarted) return;
+        if (recorderMode === "media" && mediaRecorder) {
+          if (mediaRecorder.state === "recording") { try { mediaRecorder.pause(); } catch(e){} }
+        } else if (recorderMode === "wav") {
+          wavPaused = true;
+        }
+      }
+
+      function resumeFullRecording() {
+        if (!isFullRecordingStarted) return;
+        if (recorderMode === "media" && mediaRecorder) {
+          if (mediaRecorder.state === "paused") { try { mediaRecorder.resume(); } catch(e){} }
+        } else if (recorderMode === "wav") {
+          wavPaused = false;
+        }
+      }
+
+      function stopFullRecording(cb) {
+        if (!isFullRecordingStarted) { cb && cb(null); return; }
+        if (recorderMode === "media" && mediaRecorder) {
+          try { mediaRecorder.requestData(); } catch(e){}
+          const prevOnStop = mediaRecorder.onstop;
+          mediaRecorder.onstop = () => {
+            try { fullAudioBlob = new Blob(audioChunks, { type: audioMimeType || "audio/webm" }); } catch (e) {}
+            mediaRecorder.onstop = prevOnStop;
+            cb && cb(fullAudioBlob);
+          };
+          try { mediaRecorder.stop(); } catch (e) { cb && cb(null); }
+        } else if (recorderMode === "wav") {
+          stopWavRecording(cb);
+        } else {
+          cb && cb(null);
+        }
+      }
+
+      // ========= SpeechRecognition (TẮT HOÀN TOÀN) =========
+      function initSpeech() {
+        // Tắt hoàn toàn speech recognition
+        recognition = null;
+        return;
+      }
+
+      // ========= iOS/Safari TTS English voice fix =========
+      let englishVoice = null;
+      let pendingSpeakText = null;
+
+      function selectEnglishVoice() {
+        if (!("speechSynthesis" in window)) return null;
+        const voices = window.speechSynthesis.getVoices();
+        if (!voices || !voices.length) return null;
+
+        const preferredNames = ["Samantha", "Karen", "Daniel", "Moira", "Serena", "Martha"];
+
+        let v =
+          voices.find(v => preferredNames.includes(v.name)) ||
+          voices.find(v => v.lang && v.lang.toLowerCase().startsWith("en-us")) ||
+          voices.find(v => v.lang && v.lang.toLowerCase().startsWith("en-gb")) ||
+          voices.find(v => v.lang && v.lang.toLowerCase().startsWith("en"));
+
+        englishVoice = v || null;
+        return englishVoice;
+      }
+
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.onvoiceschanged = function () {
+          const hadPending = !!pendingSpeakText;
+          selectEnglishVoice();
+          if (englishVoice && hadPending) {
+            const text = pendingSpeakText;
+            pendingSpeakText = null;
+            speakText(text);
+          }
+        };
+      }
+
+      function speakText(text) {
+        if (!("speechSynthesis" in window)) return;
+
+        // Pause recording while speaking
+        pauseFullRecording();
+        window.speechSynthesis.cancel();
+
+        if (!englishVoice) {
+          const v = selectEnglishVoice();
+          if (!v) {
+            pendingSpeakText = text;
+            window.speechSynthesis.getVoices();
+            return;
+          }
+        }
+
+        const numberWords = {
+          "0": "zero", "1": "one", "2": "two", "3": "three", "4": "four",
+          "5": "five", "6": "six", "7": "seven", "8": "eight", "9": "nine", "10": "ten"
+        };
+        const processedText = text.replace(/Question\s+(\d+)/gi, (match, num) => {
+          const w = numberWords[num];
+          return w ? "Question " + w : match;
+        });
+
+        setTimeout(() => {
+          const langCode = englishVoice && englishVoice.lang ? englishVoice.lang : "en-US";
+          const u = new SpeechSynthesisUtterance(processedText);
+          u.lang = langCode;
+          u.rate = 0.9;
+          if (englishVoice) u.voice = englishVoice;
+          window.speechSynthesis.speak(u);
+          
+          // Resume recording after speaking
+          setTimeout(() => {
+            resumeFullRecording();
+          }, 100);
+        }, 50);
+      }
+
+      // ======= in-app block =======
+      const ua = navigator.userAgent || navigator.vendor || window.opera;
+      const isInApp = ua.indexOf("FBAN") > -1 || ua.indexOf("FBAV") > -1 || ua.indexOf("Zalo") > -1;
+      if (isInApp) document.getElementById("inapp-overlay").style.display = "flex";
+
+      // ======= init selects =======
+      GRADES.forEach((g) => {
+        const opt = document.createElement("option");
+        opt.value = g.id;
+        opt.textContent = g.name;
+        gradeSelect.appendChild(opt);
+      });
+
+      function updateTopics() {
+        const g = GRADES.find((x) => x.id === gradeSelect.value);
+        topicSelect.innerHTML = "";
+        if (g) {
+          g.topics.forEach((t) => {
+            const opt = document.createElement("option");
+            opt.value = t.id;
+            opt.textContent = t.name + (t.vn ? " - " + t.vn : "");
+            topicSelect.appendChild(opt);
+          });
+        }
+      }
+
+      // ======= question state =======
+      let questionTexts = new Array(TOTAL_QUESTIONS).fill("");
+      let answers = new Array(TOTAL_QUESTIONS).fill("");
+      let currentQuestionIndex = 0;
+      let hasCompletedTopic = false;
+
+      function resetTopicState() {
+        questionTexts = new Array(TOTAL_QUESTIONS).fill("");
+        answers = new Array(TOTAL_QUESTIONS).fill("");
+        currentQuestionIndex = 0;
+        hasCompletedTopic = false;
+        suggestBtn.disabled = true;
+        suggestionsArea.textContent = "";
+        answerText.value = "";
+
+        sendBtn.disabled = false;
+
+        statusEl.textContent = 'Nhấn "Bắt đầu nói" để trả lời.';
+        recordedFlags = new Array(TOTAL_QUESTIONS).fill(false);
+      }
+
+      function renderQuestions() {
+        const tId = topicSelect.value;
+        const data = GRADE_7_QUESTIONS[tId] ? GRADE_7_QUESTIONS[tId] : { part1: [], part2: [], part3: [] };
+
+        const part = partSelect.value;
+        const list = part === "part1" ? data.part1 : part === "part2" ? data.part2 : data.part3;
+
+        questionList.innerHTML = "";
+        if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+
+        list.forEach((q, idx) => {
+          const div = document.createElement("div");
+          div.className = "question-item";
+          const qNum = part === "part1" ? idx + 1 : part === "part2" ? 6 : idx + 7;
+          const qIndex = qNum - 1;
+          questionTexts[qIndex] = q;
+
+          div.dataset.qindex = qIndex.toString();
+          div.innerHTML = '<span class="q-no">Q' + qNum + '.</span><span>Câu hỏi ' + qNum + " (Hidden)</span>";
+
+          div.onclick = () => {
+            document.querySelectorAll(".question-item").forEach((e) => e.classList.remove("active"));
+            div.classList.add("active");
+
+            currentQuestionIndex = qIndex;
+            questionTextarea.value = q;
+            questionTextContainer.style.display = "none";
+
+            answerText.value = answers[qIndex] || "";
+
+            sendBtn.disabled = false;
+
+            if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+            isRecording = false;
+            ignore_onend = true;
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            statusEl.textContent = 'Nhấn "Bắt đầu nói" để trả lời.';
+          };
+
+          questionList.appendChild(div);
+        });
+
+        if (questionList.firstChild) questionList.firstChild.click();
+      }
+
+      gradeSelect.onchange = () => { updateTopics(); resetTopicState(); renderQuestions(); };
+      topicSelect.onchange = () => { resetTopicState(); renderQuestions(); };
+      partSelect.onchange = renderQuestions;
+      updateTopics();
+      renderQuestions();
+
+      // ======= Step 2 buttons =======
+      showTextBtn.onclick = () => { questionTextContainer.style.display = "block"; };
+      speakQuestionBtn.onclick = () => { speakText(questionTextarea.value); };
+
+      // ===================== API CALL =====================
+      async function callScriptApiNoCors(action, payload) {
+        const body = JSON.stringify({ action, ...payload });
+        await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          redirect: "follow",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body
+        });
+        return { ok: true, message: "Đã gửi yêu cầu. Vui lòng kiểm tra email GV để xác nhận." };
+      }
+
+      async function submitWithRetry(payload) {
+        let lastErr = null;
+        for (let i = 0; i < 2; i++) {
+          try {
+            const r = await callScriptApiNoCors("submitAll", payload);
+            if (r && r.ok) return { ok: true, r, channel: "no-cors" };
+            lastErr = new Error((r && r.message) ? r.message : "Request failed");
+          } catch (e) {
+            lastErr = e;
+          }
+          await sleep(600 * (i + 1));
+        }
+        return { ok: false, error: lastErr };
+      }
+
+      function savePending(payload) {
+        try {
+          const obj = { payload, savedAt: new Date().toISOString() };
+          localStorage.setItem(PENDING_KEY, JSON.stringify(obj));
+          showPendingBox();
+        } catch(e) {}
+      }
+
+      function clearPending() {
+        try { localStorage.removeItem(PENDING_KEY); } catch(e) {}
+        pendingBox.style.display = "none";
+      }
+
+      function getPending() {
+        try {
+          const s = localStorage.getItem(PENDING_KEY);
+          if (!s) return null;
+          return JSON.parse(s);
+        } catch(e) { return null; }
+      }
+
+      function showPendingBox() {
+        const p = getPending();
+        if (!p) { pendingBox.style.display = "none"; return; }
+        pendingBox.style.display = "block";
+        const dt = p.savedAt ? new Date(p.savedAt) : null;
+        const when = dt ? dt.toLocaleString("vi-VN") : "(unknown time)";
+        const name = p.payload && p.payload.studentName ? p.payload.studentName : "";
+        const cls = p.payload && p.payload.studentClass ? p.payload.studentClass : "";
+        pendingInfo.textContent = `Họ tên: ${name} | Lớp: ${cls} | Lưu lúc: ${when}`;
+      }
+
+      resendPendingBtn.onclick = async () => {
+        const p = getPending();
+        if (!p || !p.payload) return;
+        resultArea.textContent = "Đang gửi lại bài đã lưu...";
+        resendPendingBtn.disabled = true;
+        clearPendingBtn.disabled = true;
+
+        const out = await submitWithRetry(p.payload);
+        resendPendingBtn.disabled = false;
+        clearPendingBtn.disabled = false;
+
+        if (out.ok) {
+          clearPending();
+          resultArea.innerHTML = '<span class="status-ok">Đã gửi lại thành công!</span>';
+        } else {
+          resultArea.innerHTML = '<span class="status-error">Gửi lại thất bại. Vui lòng thử lại khi mạng ổn định.</span>';
+        }
+      };
+
+      clearPendingBtn.onclick = () => {
+        if (!confirm("Xóa bài lưu chưa gửi?")) return;
+        clearPending();
+      };
+
+      showPendingBox();
+
+      // ===================== Start/Stop speaking =====================
+      startBtn.onclick = async () => {
+        try {
+          await startFullRecordingIfNeeded();
+          resumeFullRecording();
+          recordedFlags[currentQuestionIndex] = true;
+
+          if (recorderMode === "wav") {
+            statusEl.textContent = "Đang ghi âm (WAV fallback – iPhone/iPad OK). Nói to và rõ.";
+          } else {
+            statusEl.textContent = "Đang ghi âm... Nói to và rõ.";
+          }
+        } catch (err) {
+          console.log(err);
+          recordedFlags[currentQuestionIndex] = true;
+          statusEl.textContent = "Không thể khởi tạo ghi âm. Vui lòng kiểm tra quyền Microphone.";
+          return;
+        }
+
+        // Chỉ set trạng thái ghi âm, không bật speech recognition
+        isRecording = true;
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        statusEl.textContent = "Đang ghi âm... Hãy nói câu trả lời của bạn.";
+      };
+
+      stopBtn.onclick = () => {
+        isRecording = false;
+        ignore_onend = true;
+
+        pauseFullRecording();
+
+        let currentAns = answerText.value.trim();
+        if (currentAns) {
+          if (!/[.!?]$/.test(currentAns)) currentAns += ".";
+          answers[currentQuestionIndex] = currentAns;
+          answerText.value = currentAns;
+        }
+
+        setTimeout(() => {
+          const activeItem = document.querySelector(".question-item.active");
+
+          if (activeItem && activeItem.nextElementSibling) {
+            activeItem.nextElementSibling.click();
+            const nextText = questionTextarea.value;
+            if (nextText) {
+              speakText(nextText);
+              statusEl.textContent = "Đã chuyển câu & Đang đọc câu hỏi...";
+            }
+          } else {
+            const partOrder = ["part1", "part2", "part3"];
+            const idx = partOrder.indexOf(partSelect.value);
+
+            if (idx !== -1 && idx < partOrder.length - 1) {
+              partSelect.value = partOrder[idx + 1];
+              renderQuestions();
+              const nextText = questionTextarea.value;
+              if (nextText) {
+                speakText(nextText);
+                statusEl.textContent = "Đã chuyển sang phần mới & Đang đọc câu hỏi...";
+              } else {
+                statusEl.textContent = "Đã chuyển sang phần mới.";
+              }
+            } else {
+              statusEl.textContent = "Đã hết tất cả câu hỏi của chủ đề này.";
+              hasCompletedTopic = true;
+              suggestBtn.disabled = false;
+            }
+          }
+
+          startBtn.disabled = false;
+          stopBtn.disabled = true;
+        }, 1200);
+      };
+
+      clearBtn.onclick = () => {
+        if (!confirm("Bạn muốn xóa hết nội dung vừa nói để làm lại?")) return;
+        isRecording = false;
+        ignore_onend = true;
+
+        answerText.value = "";
+        answers[currentQuestionIndex] = "";
+
+        sendBtn.disabled = false;
+
+        statusEl.textContent = "Đã xóa. Nhấn Bắt đầu nói để làm lại.";
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+
+        hasCompletedTopic = false;
+        suggestBtn.disabled = true;
+        suggestionsArea.textContent = "";
+
+        recordedFlags[currentQuestionIndex] = false;
+      };
+
+      // ===================== SEND (FIX AUDIO LOST) =====================
+      sendBtn.onclick = () => {
+        let currentAns = answerText.value.trim();
+        if (currentAns) {
+          if (!/[.!?]$/.test(currentAns)) currentAns += ".";
+          answers[currentQuestionIndex] = currentAns;
+          answerText.value = currentAns;
+        }
+
+        if (!hasCompletedTopic) {
+          alert("Bạn cần để ứng dụng chạy hết 10 câu hỏi (cả 3 phần) rồi mới nộp bài cho giáo viên.");
+          return;
+        }
+
+        if (!allTenQuestionsRecorded()) {
+          alert("Bạn phải bấm 'Bắt đầu nói' và trả lời đủ 10 câu (Q1→Q10) thì mới nộp được bài.");
+          return;
+        }
+
+        const n = document.getElementById("studentName").value;
+        const c = document.getElementById("studentClass").value;
+        const tOpt = document.querySelector("#topicSelect option:checked");
+        const topicLabel = tOpt ? tOpt.text : "Topic";
+
+        if (!n || !c) {
+          alert("Thiếu Họ tên hoặc Lớp.");
+          return;
+        }
+
+        // Luôn gửi transcript rỗng
+        const fullTranscript = "";
+        const questionSummary = `${topicLabel} – 10-question speaking practice`;
+
+        sendBtn.disabled = true;
+        resultArea.textContent = "Đang xử lý audio...";
+        pauseFullRecording();
+
+        const sendTranscriptOnly = async () => {
+          resultArea.textContent = "Đang gửi transcript...";
+          const payload = {
+            studentName: n, studentClass: c, topicLabel,
+            questionSummary, transcript: fullTranscript,
+            mimeType: "", dataUrl: ""
+          };
+          const out = await submitWithRetry(payload);
+          sendBtn.disabled = false;
+
+          if (out.ok) {
+            resultArea.innerHTML = '<span class="status-ok">Đã gửi transcript (không có audio).</span>';
+          } else {
+            savePending(payload);
+            resultArea.innerHTML = '<span class="status-error">Gửi thất bại do lỗi mạng. Bài đã được lưu. Hãy bấm "Gửi lại bài vừa lưu".</span>';
+          }
+        };
+
+        if (!isFullRecordingStarted) {
+          sendTranscriptOnly();
+          return;
+        }
+
+        stopFullRecording((blob) => {
+          (async () => {
+            try {
+              if (!blob || !blob.size) {
+                sendBtn.disabled = false;
+                resultArea.innerHTML = '<span class="status-error">Không tạo được file ghi âm. Vui lòng thử lại.</span>';
+                return;
+              }
+
+              const mime = blob.type || audioMimeType || "audio/webm";
+              const sizeMB = (blob.size / (1024 * 1024)).toFixed(2);
+
+              // 1) Blob nhỏ: gửi dataUrl như cũ
+              if (blob.size <= SMALL_BLOB_MAX) {
+                resultArea.textContent = `Audio ${sizeMB}MB: đang chuyển đổi...`;
+                const dataUrl = await new Promise((resolve) => {
+                  blobToDataUrl(blob, resolve);
+                });
+
+                if (!dataUrl) {
+                  sendBtn.disabled = false;
+                  resultArea.innerHTML = '<span class="status-error">Lỗi chuyển đổi audio. Vui lòng thử lại.</span>';
+                  return;
+                }
+
+                let finalDataUrl = dataUrl;
+                let finalMime = mime;
+
+                if (finalDataUrl.length > MAX_DATAURL_CHARS) {
+                  finalDataUrl = "";
+                  finalMime = "";
+                }
+
+                const payload = {
+                  studentName: n, studentClass: c, topicLabel,
+                  questionSummary,
+                  transcript: fullTranscript,
+                  mimeType: finalMime,
+                  dataUrl: finalDataUrl
+                };
+
+                resultArea.textContent = finalDataUrl
+                  ? "Đang nộp bài (audio + transcript)..."
+                  : "Audio quá lớn (base64). Đang nộp transcript...";
+
+                const out = await submitWithRetry(payload);
+                sendBtn.disabled = false;
+
+                if (out.ok) {
+                  resultArea.innerHTML = finalDataUrl
+                    ? '<span class="status-ok">Đã nộp thành công (kèm audio)!</span>'
+                    : '<span class="status-ok">Đã nộp transcript (audio quá lớn nên không gửi kèm).</span>';
+                } else {
+                  savePending(payload);
+                  resultArea.innerHTML = '<span class="status-error">Nộp bài thất bại do lỗi mạng. Bài đã được lưu. Hãy bấm "Gửi lại bài vừa lưu".</span>';
+                }
+                return;
+              }
+
+              // 2) Blob lớn: CHUNK upload (FIX mất audio trên iPhone/iPad/Opera)
+              resultArea.textContent = `Audio ${sizeMB}MB: đang chia nhỏ & upload... (vui lòng không thoát trang)`;
+
+              try {
+                await uploadAudioInChunksNoCors(blob, mime, {
+                  studentName: n,
+                  studentClass: c,
+                  topicLabel,
+                  questionSummary,
+                  transcript: fullTranscript
+                });
+
+                sendBtn.disabled = false;
+                resultArea.innerHTML = '<span class="status-ok">Đã nộp thành công! Vui lòng kiểm tra email GV (sẽ có link audio).</span>';
+              } catch (e) {
+                console.log(e);
+                sendBtn.disabled = false;
+                resultArea.innerHTML = '<span class="status-error">Upload audio bị lỗi (mạng yếu/đứt). Hãy bấm Nộp bài lại ngay khi mạng ổn định và giữ trang mở trong lúc gửi.</span>';
+              }
+            } catch (e) {
+              console.log(e);
+              sendBtn.disabled = false;
+              resultArea.innerHTML = '<span class="status-error">Có lỗi xảy ra. Vui lòng thử lại.</span>';
+            }
+          })();
+        });
+      };
+
+      // gợi ý
+      suggestBtn.onclick = () => {
+        if (!hasCompletedTopic) {
+          alert("Bạn cần chạy hết 10 câu (từ câu 1 đến câu 10) trước khi xem gợi ý để tránh phụ thuộc vào bài mẫu.");
+          return;
+        }
+        const topicId = topicSelect.value;
+        const text = SUGGESTED_PARAGRAPHS_7[topicId];
+        suggestionsArea.textContent = text || "Hiện chưa có gợi ý trả lời cho chủ đề này. Thầy cô sẽ cập nhật sau.";
+      };
+    </script>
+  </body>
+</html>
